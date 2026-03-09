@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LifeXP — Level Up Your Life</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   CSS VARIABLES & THEMES
+═══════════════════════════════════════════════ */
+:root {
+  --bg-primary: #0a0a14;
+  --bg-card: #13131f;
+  --bg-card2: #1a1a2e;
+  --accent: #7c3aed;
+  --accent2: #06b6d4;
+  --accent3: #f59e0b;
+  --gold: #fbbf24;
+  --text: #f0f0ff;
+  --text-muted: #6b6b9a;
+  --text-dim: #3d3d5c;
+  --success: #10b981;
+  --danger: #ef4444;
+  --border: rgba(124,58,237,0.2);
+  --glow: rgba(124,58,237,0.4);
+  --bar-bg: rgba(255,255,255,0.06);
+  --nav-h: 72px;
+  --radius: 18px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  --font-display: 'Rajdhani', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+}
+
+/* DARK THEME (default) */
+.theme-dark { --bg-primary:#0a0a14; --bg-card:#13131f; --bg-card2:#1a1a2e; --accent:#7c3aed; --accent2:#06b6d4; }
+/* NEON THEME */
+.theme-neon { --bg-primary:#000a06; --bg-card:#001a12; --bg-card2:#002218; --accent:#00ff88; --accent2:#ff006e; --glow:rgba(0,255,136,0.4); --border:rgba(0,255,136,0.25); }
+/* FIRE THEME */
+.theme-fire { --bg-primary:#0f0500; --bg-card:#1a0800; --bg-card2:#220b00; --accent:#ff4500; --accent2:#ff8c00; --glow:rgba(255,69,0,0.4); --border:rgba(255,69,0,0.25); }
+/* CYBER THEME */
+.theme-cyber { --bg-primary:#050010; --bg-card:#0d0020; --bg-card2:#130030; --accent:#d100ff; --accent2:#00f5ff; --glow:rgba(209,0,255,0.4); --border:rgba(209,0,255,0.25); }
+/* NINJA THEME (dark gold) */
+.theme-ninja { --bg-primary:#080600; --bg-card:#100e00; --bg-card2:#181500; --accent:#c9a800; --accent2:#ff6b00; --glow:rgba(201,168,0,0.4); --border:rgba(201,168,0,0.25); }
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  width:100%; height:100%; overflow:hidden;
+  background: var(--bg-primary);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+/* ═══════════════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════════════ */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 430px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+/* HEADER */
+#header {
+  padding: 52px 20px 16px;
+  background: linear-gradient(180deg, rgba(10,10,20,0.98) 0%, rgba(10,10,20,0.8) 100%);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.app-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.level-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px var(--glow);
+}
+
+.streak-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(251,191,36,0.1);
+  border: 1px solid rgba(251,191,36,0.3);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* XP BAR */
+.xp-bar-wrapper {
+  position: relative;
+}
+.xp-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.xp-bar-track {
+  height: 8px;
+  background: var(--bar-bg);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+}
+.xp-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  box-shadow: 0 0 10px var(--glow);
+}
+.xp-bar-fill::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 12px; height: 12px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* CONTENT AREA */
+#content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding-bottom: calc(var(--nav-h) + 80px);
+}
+#content::-webkit-scrollbar { display: none; }
+
+/* TABS */
+.tab { display: none; padding: 20px 16px; }
+.tab.active { display: block; animation: fadeIn 0.2s ease; }
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ═══════════════════════════════════════════════
+   CARDS
+═══════════════════════════════════════════════ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════
+   TASK CARDS
+═══════════════════════════════════════════════ */
+.task-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.task-card:active { transform: scale(0.98); }
+.task-card.completing {
+  animation: completeAnim 0.5s forwards;
+}
+@keyframes completeAnim {
+  0%  { transform:scale(1); }
+  30% { transform:scale(1.03); }
+  100%{ transform:scale(0.9); opacity:0; }
+}
+
+.task-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--glow);
+}
+.task-info { flex: 1; min-width: 0; }
+.task-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+.task-xp-label {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  color: var(--accent2);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.task-actions { display: flex; gap: 8px; align-items: center; }
+
+.btn-complete {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px var(--glow);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-complete:active { transform: scale(0.92); }
+
+.btn-delete {
+  background: rgba(239,68,68,0.1);
+  color: var(--danger);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.btn-delete:active { background: rgba(239,68,68,0.25); }
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-state p { font-size: 0.9rem; line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════
+   FAB — FLOATING ACTION BUTTON
+═══════════════════════════════════════════════ */
+#fab {
+  position: fixed;
+  bottom: calc(var(--nav-h) + 16px);
+  right: 20px;
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none;
+  color: white;
+  font-size: 1.6rem;
+  cursor: pointer;
+  box-shadow: 0 8px 24px var(--glow);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+#fab:active { transform: scale(0.88); }
+
+/* ═══════════════════════════════════════════════
+   BOTTOM NAVIGATION
+═══════════════════════════════════════════════ */
+#nav {
+  height: var(--nav-h);
+  background: rgba(13,13,25,0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 8px 8px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 50;
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 12px;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-btn.active { color: var(--accent); }
+.nav-btn.active .nav-icon { background: rgba(124,58,237,0.15); }
+.nav-icon {
+  font-size: 1.35rem;
+  padding: 4px 12px;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+.nav-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════ */
+#modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+#modal-overlay.open { display: flex; animation: overlayIn 0.2s ease; }
+@keyframes overlayIn { from{opacity:0} to{opacity:1} }
+
+#modal {
+  width: 100%;
+  max-width: 430px;
+  background: var(--bg-card2);
+  border-radius: 28px 28px 0 0;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  padding: 20px 20px 40px;
+  animation: slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+
+.modal-handle {
+  width: 36px; height: 4px;
+  background: var(--text-dim);
+  border-radius: 2px;
+  margin: 0 auto 20px;
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.form-input {
+  width: 100%;
+  background: var(--bar-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px 16px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--text-dim); }
+
+.xp-presets {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;
+}
+.xp-preset {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.xp-preset.selected, .xp-preset:active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.emoji-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.emoji-btn {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.emoji-btn.selected, .emoji-btn:active {
+  border-color: var(--accent);
+  background: rgba(124,58,237,0.15);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--glow);
+  transition: transform 0.15s;
+  margin-top: 8px;
+}
+.btn-primary:active { transform: scale(0.97); }
+
+/* ═══════════════════════════════════════════════
+   XP POPUP ANIMATION
+═══════════════════════════════════════════════ */
+.xp-popup {
+  position: fixed;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent2);
+  text-shadow: 0 0 20px var(--accent2);
+  pointer-events: none;
+  z-index: 999;
+  animation: xpFloat 1.4s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes xpFloat {
+  0%   { opacity:0; transform:translateY(0) scale(0.5); }
+  20%  { opacity:1; transform:translateY(-10px) scale(1.1); }
+  80%  { opacity:1; transform:translateY(-60px) scale(1); }
+  100% { opacity:0; transform:translateY(-80px) scale(0.9); }
+}
+
+/* LEVEL UP OVERLAY */
+#levelup-overlay {
+  position: fixed; inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  pointer-events: none;
+}
+#levelup-overlay.show { display: flex; }
+.levelup-card {
+  background: linear-gradient(135deg, var(--bg-card2), var(--bg-card));
+  border: 2px solid var(--accent);
+  border-radius: 24px;
+  padding: 36px 40px;
+  text-align: center;
+  box-shadow: 0 0 60px var(--glow);
+  animation: levelUpAnim 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes levelUpAnim {
+  from { transform: scale(0.5) rotate(-5deg); opacity:0; }
+  to   { transform: scale(1) rotate(0deg); opacity:1; }
+}
+.levelup-emoji { font-size: 3.5rem; }
+.levelup-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text-muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 8px 0 4px;
+}
+.levelup-num {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+/* CONFETTI */
+.confetti-piece {
+  position: fixed;
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 998;
+  animation: confettiFall linear forwards;
+}
+@keyframes confettiFall {
+  0%  { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100%{ transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════
+   STATS TAB
+═══════════════════════════════════════════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+}
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* CHART */
+#xp-chart-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+#xp-chart {
+  width: 100%;
+  height: 120px;
+}
+
+/* ═══════════════════════════════════════════════
+   ACHIEVEMENTS TAB
+═══════════════════════════════════════════════ */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.badge-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 8px;
+  text-align: center;
+  transition: transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.badge-item.unlocked {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(6,182,212,0.08));
+}
+.badge-item.unlocked::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+}
+.badge-icon { font-size: 2rem; margin-bottom: 6px; }
+.badge-name {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+.badge-item.unlocked .badge-name { color: var(--text); }
+.badge-locked-overlay {
+  position: absolute; inset: 0;
+  background: rgba(10,10,20,0.6);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  border-radius: var(--radius);
+}
+.badge-item.unlocked .badge-locked-overlay { display: none; }
+
+/* ═══════════════════════════════════════════════
+   SHOP TAB
+═══════════════════════════════════════════════ */
+.shop-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.shop-item.owned { border-color: var(--success); opacity: 0.7; }
+.shop-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+.shop-info { flex: 1; }
+.shop-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+}
+.shop-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.shop-price {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+  display: flex; align-items: center; gap: 4px;
+}
+.btn-buy {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px var(--glow);
+  transition: transform 0.15s;
+}
+.btn-buy:active { transform: scale(0.92); }
+.btn-buy:disabled {
+  background: var(--text-dim);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.btn-owned {
+  background: rgba(16,185,129,0.15);
+  color: var(--success);
+  border: 1px solid rgba(16,185,129,0.3);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* STREAK CARD */
+.streak-card {
+  background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(245,158,11,0.04));
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.streak-col { text-align: center; }
+.streak-val {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+.streak-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* TOAST NOTIFICATION */
+#toast {
+  position: fixed;
+  bottom: calc(var(--nav-h) + 16px);
+  left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: var(--shadow);
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* MISC */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+.milestone-list { }
+.milestone-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.milestone-row:last-child { border-bottom: none; }
+.milestone-icon { font-size: 1.2rem; }
+.milestone-text { flex: 1; font-size: 0.85rem; }
+.milestone-reward {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+.milestone-done { color: var(--success); font-size: 1rem; }
+</style>
+</head>
+<body>
+
+<!-- ─── APP SHELL ─── -->
+<div id="app" class="theme-dark">
+
+  <!-- HEADER -->
+  <header id="header">
+    <div class="header-top">
+      <div class="app-title">LIFEXP</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="streak-pill">🔥 <span id="hdr-streak">0</span> day</div>
+        <div class="level-badge">⚡ LV <span id="hdr-level">1</span></div>
+      </div>
+    </div>
+    <div class="xp-bar-wrapper">
+      <div class="xp-labels">
+        <span id="xp-current-label">0 XP</span>
+        <span id="xp-next-label">Next: 100 XP</span>
+      </div>
+      <div class="xp-bar-track">
+        <div class="xp-bar-fill" id="xp-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main id="content">
+
+    <!-- TASKS TAB -->
+    <div class="tab active" id="tab-tasks">
+      <div class="section-title">Active Quests</div>
+      <div id="task-list"></div>
+    </div>
+
+    <!-- STATS TAB -->
+    <div class="tab" id="tab-stats">
+      <div class="section-title">Today</div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-today-xp">0</div>
+          <div class="stat-label">XP Today</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-week-xp">0</div>
+          <div class="stat-label">XP This Week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total-tasks">0</div>
+          <div class="stat-label">Tasks Done</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total-xp">0</div>
+          <div class="stat-label">Total XP</div>
+        </div>
+      </div>
+
+      <div class="section-title">Weekly XP</div>
+      <div id="xp-chart-wrap">
+        <canvas id="xp-chart"></canvas>
+      </div>
+
+      <div class="section-title">Streak</div>
+      <div class="streak-card">
+        <div class="streak-col">
+          <div class="streak-val" id="stat-streak">0</div>
+          <div class="streak-sub">🔥 Current</div>
+        </div>
+        <div class="streak-col">
+          <div class="streak-val" id="stat-best-streak">0</div>
+          <div class="streak-sub">⭐ Longest</div>
+        </div>
+      </div>
+
+      <div class="section-title">Streak Bonuses</div>
+      <div class="card" style="padding:14px 18px">
+        <div class="milestone-list" id="milestone-list"></div>
+      </div>
+    </div>
+
+    <!-- ACHIEVEMENTS TAB -->
+    <div class="tab" id="tab-achievements">
+      <div class="section-title">Badge Gallery</div>
+      <div class="badge-grid" id="badge-grid"></div>
+    </div>
+
+    <!-- SHOP TAB -->
+    <div class="tab" id="tab-shop">
+      <div class="section-title">Your Balance</div>
+      <div class="card" style="text-align:center;padding:22px">
+        <div style="font-family:var(--font-display);font-size:2.5rem;font-weight:700;color:var(--gold)">
+          💰 <span id="shop-balance">0</span>
+        </div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:4px">Available XP to spend</div>
+      </div>
+
+      <div class="section-title" style="margin-top:16px">Themes</div>
+      <div id="shop-list"></div>
+    </div>
+
+  </main>
+
+  <!-- FAB -->
+  <button id="fab" aria-label="Add Task">＋</button>
+
+  <!-- BOTTOM NAV -->
+  <nav id="nav">
+    <button class="nav-btn active" data-tab="tasks" onclick="switchTab('tasks',this)">
+      <span class="nav-icon">⚔️</span>
+      <span class="nav-label">Quests</span>
+    </button>
+    <button class="nav-btn" data-tab="stats" onclick="switchTab('stats',this)">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Stats</span>
+    </button>
+    <button class="nav-btn" data-tab="achievements" onclick="switchTab('achievements',this)">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">Badges</span>
+    </button>
+    <button class="nav-btn" data-tab="shop" onclick="switchTab('shop',this)">
+      <span class="nav-icon">🛒</span>
+      <span class="nav-label">Shop</span>
+    </button>
+  </nav>
+
+</div><!-- end #app -->
+
+<!-- MODAL: Add Task -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">New Quest</div>
+
+    <div class="form-group">
+      <label class="form-label">Quest Name</label>
+      <input type="text" id="task-name-input" class="form-input" placeholder="e.g. Go for a run..." maxlength="60">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">XP Reward</label>
+      <input type="number" id="task-xp-input" class="form-input" placeholder="25" min="1" max="999">
+      <div class="xp-presets">
+        <button class="xp-preset selected" onclick="setXP(10,this)">+10</button>
+        <button class="xp-preset" onclick="setXP(25,this)">+25</button>
+        <button class="xp-preset" onclick="setXP(50,this)">+50</button>
+        <button class="xp-preset" onclick="setXP(100,this)">+100</button>
+        <button class="xp-preset" onclick="setXP(200,this)">+200</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Icon</label>
+      <div class="emoji-picker" id="emoji-picker"></div>
+    </div>
+
+    <button class="btn-primary" onclick="addTask()">⚡ ADD QUEST</button>
+  </div>
+</div>
+
+<!-- LEVEL UP OVERLAY -->
+<div id="levelup-overlay">
+  <div class="levelup-card">
+    <div class="levelup-emoji">🎉</div>
+    <div class="levelup-title">LEVEL UP!</div>
+    <div class="levelup-num" id="levelup-num">2</div>
+    <div style="font-size:0.85rem;color:var(--text-muted);margin-top:8px">Keep going, hero!</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA MODEL & PERSISTENCE
+// ═══════════════════════════════════════════════
+
+const LEVEL_THRESHOLDS = [0,100,250,500,800,1200,1700,2300,3000,3800,4700,5700,6800,8000,9300,10700];
+// Extend dynamically beyond that
+function xpForLevel(lv) {
+  if(lv <= LEVEL_THRESHOLDS.length) return LEVEL_THRESHOLDS[lv-1] || 0;
+  // Formula: ~1200 * (lv-10) added each level after 10
+  return LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length-1] + Math.round(1200*(lv - LEVEL_THRESHOLDS.length));
+}
+
+const ACHIEVEMENTS = [
+  { id:'first_task',  icon:'⚡', name:'First Quest',    desc:'Complete your first task',     check: s => s.totalTasks >= 1 },
+  { id:'tasks_10',    icon:'🔟', name:'Quest Master',   desc:'Complete 10 tasks',             check: s => s.totalTasks >= 10 },
+  { id:'tasks_50',    icon:'💯', name:'Quest Legend',   desc:'Complete 50 tasks',             check: s => s.totalTasks >= 50 },
+  { id:'streak_3',    icon:'🔥', name:'On Fire',        desc:'3-day streak',                  check: s => s.bestStreak >= 3 },
+  { id:'streak_7',    icon:'🌟', name:'Week Warrior',   desc:'7-day streak',                  check: s => s.bestStreak >= 7 },
+  { id:'streak_30',   icon:'👑', name:'Streak King',    desc:'30-day streak',                 check: s => s.bestStreak >= 30 },
+  { id:'level_5',     icon:'⚔️', name:'Level 5',        desc:'Reach level 5',                 check: s => s.level >= 5 },
+  { id:'level_10',    icon:'🏆', name:'Level 10',       desc:'Reach level 10',                check: s => s.level >= 10 },
+  { id:'xp_1000',     icon:'💎', name:'XP Hoarder',     desc:'Earn 1000 total XP',            check: s => s.totalXP >= 1000 },
+  { id:'xp_10000',    icon:'🌠', name:'XP Addict',      desc:'Earn 10000 total XP',           check: s => s.totalXP >= 10000 },
+  { id:'shop_buy',    icon:'🛍️', name:'First Purchase',  desc:'Buy something from the shop',   check: s => s.shopPurchases >= 1 },
+  { id:'tasks_100',   icon:'🎖️', name:'Centurion',       desc:'Complete 100 tasks',            check: s => s.totalTasks >= 100 },
+];
+
+const SHOP_ITEMS = [
+  { id:'theme-dark',  name:'Shadow Realm',  desc:'Default dark theme', price:0,   theme:'dark',  icon:'🌑', iconBg:'#1a1a2e' },
+  { id:'theme-neon',  name:'Neon Pulse',    desc:'Green matrix vibes', price:100, theme:'neon',  icon:'💚', iconBg:'#001a12' },
+  { id:'theme-fire',  name:'Inferno Mode',  desc:'Blazing fire theme', price:200, theme:'fire',  icon:'🔥', iconBg:'#1a0800' },
+  { id:'theme-cyber', name:'Cyberpunk',     desc:'Purple haze aesthetic',price:300, theme:'cyber', icon:'⚡', iconBg:'#0d0020' },
+  { id:'theme-ninja', name:'Gold Ninja',    desc:'Golden shadow aesthetic',price:200, theme:'ninja', icon:'⭐', iconBg:'#100e00' },
+];
+
+const STREAK_MILESTONES = [
+  { days:3,  bonus:20,  icon:'🔥' },
+  { days:7,  bonus:50,  icon:'⭐' },
+  { days:14, bonus:100, icon:'💎' },
+  { days:30, bonus:200, icon:'👑' },
+];
+
+// Default state
+const defaultState = () => ({
+  tasks: [],
+  totalXP: 0,
+  level: 1,
+  streak: 0,
+  bestStreak: 0,
+  lastActiveDate: null,
+  achievements: [],
+  shopOwned: ['theme-dark'],
+  activeTheme: 'theme-dark',
+  shopPurchases: 0,
+  totalTasks: 0,
+  todayXP: 0,
+  todayDate: null,
+  weekXP: Array(7).fill(0), // last 7 days
+  weekStartDate: null,
+  claimedStreakMilestones: [],
+});
+
+let state = defaultState();
+
+function saveState() {
+  localStorage.setItem('lifexp_state', JSON.stringify(state));
+}
+function loadState() {
+  const raw = localStorage.getItem('lifexp_state');
+  if(raw) {
+    try { state = { ...defaultState(), ...JSON.parse(raw) }; }
+    catch(e) { state = defaultState(); }
+  }
+  // Reset today XP if it's a new day
+  const today = todayStr();
+  if(state.todayDate !== today) {
+    // Shift weekXP
+    if(!state.weekXP) state.weekXP = Array(7).fill(0);
+    state.weekXP.shift();
+    state.weekXP.push(state.todayXP || 0);
+    state.todayXP = 0;
+    state.todayDate = today;
+    updateStreak();
+  }
+}
+function todayStr() {
+  return new Date().toISOString().split('T')[0];
+}
+
+// ── STREAK LOGIC ──
+function updateStreak() {
+  const today = todayStr();
+  if(!state.lastActiveDate) {
+    // First ever
+    state.lastActiveDate = today;
+    return;
+  }
+  const last = new Date(state.lastActiveDate);
+  const now  = new Date(today);
+  const diff = Math.round((now - last) / 86400000);
+  if(diff === 1) {
+    state.streak++;
+    state.bestStreak = Math.max(state.bestStreak, state.streak);
+  } else if(diff > 1) {
+    state.streak = 1;
+  }
+  state.lastActiveDate = today;
+}
+function markActiveToday() {
+  const today = todayStr();
+  if(state.lastActiveDate === today) return; // already marked
+  updateStreak();
+  state.lastActiveDate = today;
+  // Check streak milestones
+  STREAK_MILESTONES.forEach(m => {
+    if(state.streak >= m.days && !state.claimedStreakMilestones.includes(m.days)) {
+      state.claimedStreakMilestones.push(m.days);
+      addXP(m.bonus, null, `🔥 ${m.days}-Day Streak Bonus! +${m.bonus} XP`);
+    }
+  });
+  saveState();
+}
+
+// ── XP & LEVEL ──
+function addXP(amount, originEl, toastMsg) {
+  const prevLevel = state.level;
+  state.totalXP += amount;
+  state.todayXP = (state.todayXP || 0) + amount;
+  // Recalc level
+  let lv = 1;
+  while(xpForLevel(lv+1) <= state.totalXP) lv++;
+  state.level = lv;
+
+  // XP popup animation
+  if(originEl) {
+    const r = originEl.getBoundingClientRect();
+    const popup = document.createElement('div');
+    popup.className = 'xp-popup';
+    popup.textContent = `+${amount} XP`;
+    popup.style.left = (r.left + r.width/2 - 30) + 'px';
+    popup.style.top  = (r.top - 20) + 'px';
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 1400);
+  }
+  if(toastMsg) showToast(toastMsg);
+
+  // Level up?
+  if(state.level > prevLevel) {
+    showLevelUp(state.level);
+    checkAchievements();
+  }
+  updateHeader();
+  saveState();
+}
+
+// ── ACHIEVEMENTS ──
+function checkAchievements() {
+  ACHIEVEMENTS.forEach(a => {
+    if(!state.achievements.includes(a.id) && a.check(state)) {
+      state.achievements.push(a.id);
+      showToast(`🏆 Badge Unlocked: ${a.name}!`);
+      renderBadges();
+    }
+  });
+  saveState();
+}
+
+// ═══════════════════════════════════════════════
+// RENDERING
+// ═══════════════════════════════════════════════
+
+const ICONS = ['⚔️','🏃','📚','💪','🧘','🎯','🎨','💻','🌿','🍎','💤','🎵','🏋️','🧹','📝','🚴','🌄','🎮','🛁','💧'];
+let selectedEmoji = ICONS[0];
+let selectedXP = 10;
+
+function renderAll() {
+  updateHeader();
+  renderTasks();
+  renderStats();
+  renderBadges();
+  renderShop();
+  renderMilestones();
+  renderChart();
+}
+
+// HEADER
+function updateHeader() {
+  const lv = state.level;
+  const currXP = state.totalXP;
+  const thisLvXP = xpForLevel(lv);
+  const nextLvXP = xpForLevel(lv+1);
+  const progress = nextLvXP > thisLvXP
+    ? Math.min(100, Math.round((currXP - thisLvXP) / (nextLvXP - thisLvXP) * 100))
+    : 100;
+
+  document.getElementById('hdr-level').textContent = lv;
+  document.getElementById('hdr-streak').textContent = state.streak;
+  document.getElementById('xp-bar').style.width = progress + '%';
+  document.getElementById('xp-current-label').textContent = currXP + ' XP';
+  document.getElementById('xp-next-label').textContent = lv < 999 ? `Next: ${nextLvXP} XP` : 'MAX LEVEL';
+}
+
+// TASKS
+function renderTasks() {
+  const list = document.getElementById('task-list');
+  if(state.tasks.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">⚔️</div>
+      <p>No quests yet.<br>Tap <strong>＋</strong> to add your first quest!</p>
+    </div>`;
+    return;
+  }
+  list.innerHTML = state.tasks.map((t,i) => `
+    <div class="task-card" id="task-${i}">
+      <div class="task-icon">${t.icon}</div>
+      <div class="task-info">
+        <div class="task-name">${escHtml(t.name)}</div>
+        <div class="task-xp-label">+${t.xp} XP</div>
+      </div>
+      <div class="task-actions">
+        <button class="btn-complete" onclick="completeTask(${i},this)">✓ Done</button>
+        <button class="btn-delete" onclick="deleteTask(${i})">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// STATS
+function renderStats() {
+  document.getElementById('stat-today-xp').textContent   = state.todayXP || 0;
+  document.getElementById('stat-week-xp').textContent    = (state.weekXP||[]).reduce((a,b)=>a+b,0);
+  document.getElementById('stat-total-tasks').textContent= state.totalTasks || 0;
+  document.getElementById('stat-total-xp').textContent   = state.totalXP;
+  document.getElementById('stat-streak').textContent     = state.streak;
+  document.getElementById('stat-best-streak').textContent= state.bestStreak;
+  document.getElementById('shop-balance').textContent    = state.totalXP;
+}
+
+// CHART
+function renderChart() {
+  const canvas = document.getElementById('xp-chart');
+  const w = canvas.offsetWidth, h = 120;
+  canvas.width = w * devicePixelRatio;
+  canvas.height = h * devicePixelRatio;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+
+  const data = [...(state.weekXP||Array(7).fill(0)), state.todayXP||0];
+  const maxVal = Math.max(...data, 10);
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun','Today'];
+  const barW = (w - 16) / data.length;
+  const colors = ['#7c3aed','#6d28d9','#5b21b6','#4c1d95','#7c3aed','#5b21b6','#7c3aed','#06b6d4'];
+
+  data.forEach((val, i) => {
+    const barH = Math.max(4, (val / maxVal) * (h - 36));
+    const x = 8 + i * barW + barW * 0.15;
+    const bw = barW * 0.7;
+    const y = h - 20 - barH;
+
+    // Bar
+    const grad = ctx.createLinearGradient(0, y, 0, h-20);
+    grad.addColorStop(0, colors[i]);
+    grad.addColorStop(1, colors[i]+'44');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x, y, bw, barH, 4);
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = i === 7 ? '#06b6d4' : '#6b6b9a';
+    ctx.font = `${10 * devicePixelRatio / devicePixelRatio}px Outfit`;
+    ctx.textAlign = 'center';
+    ctx.fillText(days[i], x + bw/2, h - 4);
+  });
+}
+
+// BADGES
+function renderBadges() {
+  const grid = document.getElementById('badge-grid');
+  grid.innerHTML = ACHIEVEMENTS.map(a => {
+    const unlocked = state.achievements.includes(a.id);
+    return `<div class="badge-item ${unlocked ? 'unlocked' : ''}">
+      <div class="badge-icon">${a.icon}</div>
+      <div class="badge-name">${a.name}</div>
+      ${!unlocked ? '<div class="badge-locked-overlay">🔒</div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+// SHOP
+function renderShop() {
+  const list = document.getElementById('shop-list');
+  list.innerHTML = SHOP_ITEMS.map(item => {
+    const owned = state.shopOwned.includes(item.id);
+    const active = state.activeTheme === item.theme;
+    const canAfford = state.totalXP >= item.price;
+    return `<div class="shop-item ${owned ? 'owned' : ''}">
+      <div class="shop-icon" style="background:${item.iconBg}">${item.icon}</div>
+      <div class="shop-info">
+        <div class="shop-name">${item.name} ${active ? '✓' : ''}</div>
+        <div class="shop-desc">${item.desc}</div>
+        <div class="shop-price">💰 ${item.price > 0 ? item.price + ' XP' : 'Free'}</div>
+      </div>
+      ${owned
+        ? `<button class="btn-owned" onclick="applyTheme('${item.theme}')">${active ? 'Active' : 'Use'}</button>`
+        : `<button class="btn-buy" ${!canAfford ? 'disabled' : ''} onclick="buyItem('${item.id}','${item.theme}',${item.price})">Buy</button>`
+      }
+    </div>`;
+  }).join('');
+}
+
+// MILESTONES
+function renderMilestones() {
+  const list = document.getElementById('milestone-list');
+  list.innerHTML = STREAK_MILESTONES.map(m => {
+    const done = state.claimedStreakMilestones.includes(m.days);
+    return `<div class="milestone-row">
+      <span class="milestone-icon">${m.icon}</span>
+      <span class="milestone-text">${m.days}-day streak</span>
+      <span class="milestone-reward">+${m.bonus} XP</span>
+      <span class="milestone-done">${done ? '✅' : '⬜'}</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════
+
+function addTask() {
+  const name = document.getElementById('task-name-input').value.trim();
+  const xp   = parseInt(document.getElementById('task-xp-input').value) || selectedXP;
+  if(!name) {
+    document.getElementById('task-name-input').focus();
+    document.getElementById('task-name-input').style.borderColor = 'var(--danger)';
+    setTimeout(() => document.getElementById('task-name-input').style.borderColor = '', 800);
+    return;
+  }
+  state.tasks.push({ name, xp: Math.max(1, Math.min(999, xp)), icon: selectedEmoji });
+  saveState();
+  closeModal();
+  renderTasks();
+  showToast('Quest added! ⚔️');
+}
+
+function completeTask(index, btn) {
+  const task = state.tasks[index];
+  if(!task) return;
+  const card = document.getElementById(`task-${index}`);
+  card.classList.add('completing');
+
+  markActiveToday();
+  addXP(task.xp, btn, null);
+  state.totalTasks = (state.totalTasks || 0) + 1;
+
+  // Show XP popup from card position
+  const r = card.getBoundingClientRect();
+  const popup = document.createElement('div');
+  popup.className = 'xp-popup';
+  popup.textContent = `+${task.xp} XP ⚡`;
+  popup.style.left = (r.left + r.width/2 - 40) + 'px';
+  popup.style.top  = (r.top + 10) + 'px';
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 1400);
+
+  setTimeout(() => {
+    state.tasks.splice(index, 1);
+    saveState();
+    checkAchievements();
+    renderAll();
+  }, 480);
+}
+
+function deleteTask(index) {
+  state.tasks.splice(index, 1);
+  saveState();
+  renderTasks();
+}
+
+function buyItem(id, theme, price) {
+  if(state.totalXP < price) { showToast('Not enough XP! 💸'); return; }
+  state.totalXP -= price;
+  state.shopOwned.push(id);
+  state.shopPurchases = (state.shopPurchases || 0) + 1;
+  applyTheme(theme);
+  checkAchievements();
+  updateHeader();
+  renderShop();
+  renderStats();
+  showToast('Theme unlocked! 🎉');
+}
+
+function applyTheme(theme) {
+  const app = document.getElementById('app');
+  app.className = 'theme-' + theme;
+  state.activeTheme = theme;
+  saveState();
+  renderShop();
+}
+
+// ═══════════════════════════════════════════════
+// UI: MODAL, TABS, TOAST, ANIMATIONS
+// ═══════════════════════════════════════════════
+
+function openModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('task-name-input').value = '';
+  document.getElementById('task-xp-input').value = '';
+  setTimeout(() => document.getElementById('task-name-input').focus(), 300);
+}
+function closeModal(e) {
+  if(e && e.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+document.getElementById('fab').addEventListener('click', openModal);
+
+function setXP(val, btn) {
+  selectedXP = val;
+  document.getElementById('task-xp-input').value = val;
+  document.querySelectorAll('.xp-preset').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// Emoji picker
+function buildEmojiPicker() {
+  const picker = document.getElementById('emoji-picker');
+  picker.innerHTML = ICONS.map((e,i) =>
+    `<button class="emoji-btn ${i===0?'selected':''}" onclick="selectEmoji('${e}',this)">${e}</button>`
+  ).join('');
+}
+function selectEmoji(e, btn) {
+  selectedEmoji = e;
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+
+  // Show/hide FAB only on tasks tab
+  document.getElementById('fab').style.display = name === 'tasks' ? 'flex' : 'none';
+
+  if(name === 'stats') { renderStats(); renderChart(); }
+  if(name === 'achievements') renderBadges();
+  if(name === 'shop') renderShop();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function showLevelUp(lv) {
+  const overlay = document.getElementById('levelup-overlay');
+  document.getElementById('levelup-num').textContent = lv;
+  overlay.classList.add('show');
+  spawnConfetti();
+  setTimeout(() => overlay.classList.remove('show'), 2500);
+}
+
+function spawnConfetti() {
+  const colors = ['#7c3aed','#06b6d4','#f59e0b','#10b981','#ef4444','#fbbf24','#a78bfa'];
+  for(let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      c.style.cssText = `
+        left: ${Math.random()*100}vw;
+        top: -10px;
+        background: ${colors[Math.floor(Math.random()*colors.length)]};
+        width: ${6 + Math.random()*8}px;
+        height: ${6 + Math.random()*8}px;
+        border-radius: ${Math.random()>0.5 ? '50%' : '2px'};
+        animation-duration: ${1.5 + Math.random()*1.5}s;
+        animation-delay: 0s;
+      `;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3000);
+    }, Math.random() * 400);
+  }
+}
+
+// Keyboard: Enter to submit task
+document.getElementById('task-name-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter') addTask();
+});
+
+// Prevent scroll propagation for modal
+document.getElementById('modal').addEventListener('touchmove', e => e.stopPropagation());
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+loadState();
+applyTheme(state.activeTheme || 'dark');
+buildEmojiPicker();
+renderAll();
+
+// Resize chart on orientation change
+window.addEventListener('resize', () => {
+  if(document.getElementById('tab-stats').classList.contains('active')) renderChart();
+});
+</script>
+</body>
+</html>
